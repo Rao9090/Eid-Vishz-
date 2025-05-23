@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eid Mubarak Card - Dark Theme</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Merriweather:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', 'Merriweather', serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); /* Dark blue/purple gradient */
+            color: #e0e0e0; /* Light gray text for body */
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        #greetingCard {
+            background-color: #2c3e50; /* Darker grayish blue */
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 5px #f1c40f; /* Gold accent border */
+            max-width: 550px;
+            width: 95%;
+            border: 2px solid #b8860b; /* DarkGoldenRod, still works as accent */
+        }
+
+        #eidImage {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            margin-bottom: 20px; /* Space before "EID MUBARAK" */
+            border: 4px solid #DAA520; /* GoldenRod for image border */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        #greetingMessage { /* This div is always visible */
+            margin-bottom: 25px; /* Space before input section */
+        }
+
+        #greetingMessage h1, #greetingMessage h2 {
+            margin: 8px 0;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+        }
+        
+        @keyframes fadeInGrow {
+            0% { opacity: 0; transform: scale(0.8) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .animated-text { animation: fadeInGrow 1.2s ease-out forwards; }
+        
+        #greetingMessage h1#eidMubarakText { /* For "EID MUBARAK" */
+            font-family: 'Cinzel Decorative', cursive;
+            font-weight: 900; /* Bolder */
+            font-size: 3.5em; /* Larger size */
+            color: #f1c40f; /* Gold color */
+            letter-spacing: 2px;
+            animation-delay: 0s;
+            line-height: 1.1;
+        }
+
+        #greetingMessage h2#namePlaceholder { /* For "From [Sender]" */
+            font-family: 'Merriweather', serif;
+            font-size: 1.6em;
+            color: #bdc3c7; /* Light silver/gray */
+            animation-delay: 0.4s;
+        }
+
+        #nameInputSection {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed #b8860b; /* DarkGoldenRod dashed line */
+        }
+        
+        #nameInputSection p {
+            font-size: 1.1em;
+            color: #ecf0f1; /* Lighter gray for instruction text */
+            margin-bottom: 15px;
+        }
+        
+        .input-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        #senderNameInput {
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 2px solid #DAA520; /* Gold border */
+            border-radius: 8px;
+            width: calc(100% - 200px); /* Adjust based on button width */
+            min-width: 150px;
+            font-family: 'Poppins', Arial, sans-serif;
+            background-color: #34495e; /* Dark input background */
+            color: #ecf0f1; /* Light text in input */
+            vertical-align: middle;
+        }
+        #senderNameInput::placeholder {
+            color: #95a5a6; /* Lighter placeholder text */
+        }
+        #senderNameInput:focus {
+            outline: none;
+            border-color: #f1c40f; /* Brighter gold on focus */
+            box-shadow: 0 0 8px rgba(241, 196, 15, 0.4);
+        }
+
+        #generateLinkButton, #shareButton, #shareOnWhatsAppButton, #copyButton {
+            padding: 12px 18px;
+            font-size: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Poppins', 'Merriweather', serif;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            vertical-align: middle;
+            display: inline-flex; 
+            align-items: center;
+            justify-content: center;
+            gap: 8px; 
+        }
+        
+        #generateLinkButton {
+            background-color: #006400; /* Green can still work for action */
+            color: #f1c40f; /* Gold text */
+        }
+        #generateLinkButton:hover {
+            background-color: #004d00;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+        }
+        
+        #shareOnWhatsAppButton {
+            background-color: #25D366; /* WhatsApp Green */
+            color: #FFFFFF;
+        }
+        #shareOnWhatsAppButton:hover {
+            background-color: #1EBE57;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+        }
+
+        #copyButton {
+            background-color: #b8860b; /* DarkGoldenRod */
+            color: #FFFFFF;
+        }
+        #copyButton:hover {
+            background-color: #8B4513; /* SaddleBrown */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+        }
+
+        #shareButton { /* Web Share API / More Options */
+            background-color: #3498db; /* A nice blue for general share */
+            color: #FFFFFF;
+        }
+        #shareButton:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+        }
+
+        .icon-svg { /* Common class for button icons */
+            width: 18px;
+            height: 18px;
+            fill: currentColor; /* Will take text color of parent button */
+        }
+        #shareOnWhatsAppButton .icon-svg { fill: white; } /* Explicit for WhatsApp */
+
+
+        #generatedLinkContainer {
+            margin-top: 25px;
+            font-size: 1em;
+            word-break: break-all;
+            background-color: #1f2c39; /* Darker container background */
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #f1c40f; /* Gold border */
+        }
+        #generatedLinkContainer p {
+            margin-bottom: 10px;
+            font-size: 0.95em;
+            color: #bdc3c7; /* Light gray text */
+        }
+        #generatedLinkContainer a#displayLink {
+            color: #3498db; /* Bright blue for link */
+            text-decoration: none;
+            font-weight: bold;
+            display: block; 
+            margin-bottom: 15px;
+            padding: 8px;
+            background-color: #2c3e50; /* Slightly lighter than container */
+            border-radius: 4px;
+        }
+        #generatedLinkContainer a#displayLink:hover { text-decoration: underline; color: #5dade2;}
+        
+        .hidden { display: none !important; }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px; 
+            flex-wrap: wrap; 
+            margin-top: 15px;
+        }
+        .action-buttons button { margin: 0; }
+
+    </style>
+</head>
+<body>
+<script type="text/javascript">
+	atOptions = {
+		'key' : 'fdfa28a6ac77e85dc5dde07e96a048e7',
+		'format' : 'iframe',
+		'height' : 60,
+		'width' : 468,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//www.highperformanceformat.com/fdfa28a6ac77e85dc5dde07e96a048e7/invoke.js"></script>
+    <div id="greetingCard">
+        <img id="eidImage" src="Eid.gif" alt="Eid Mubarak GIF">
+<script type="text/javascript">
+	atOptions = {
+		'key' : 'fdfa28a6ac77e85dc5dde07e96a048e7',
+		'format' : 'iframe',
+		'height' : 60,
+		'width' : 468,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//www.highperformanceformat.com/fdfa28a6ac77e85dc5dde07e96a048e7/invoke.js"></script><script type="text/javascript">
+	atOptions = {
+		'key' : 'fdfa28a6ac77e85dc5dde07e96a048e7',
+		'format' : 'iframe',
+		'height' : 60,
+		'width' : 468,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//www.highperformanceformat.com/fdfa28a6ac77e85dc5dde07e96a048e7/invoke.js"></script>
+        <div id="greetingMessage">
+            <h1 id="eidMubarakText" class="animated-text">EID MUBARAK</h1>
+            <h2 id="namePlaceholder" class="animated-text hidden"></h2> <!-- Hidden by default -->
+        </div>
+
+        <div id="nameInputSection">
+            <p>Enter your name to create your Eid greeting:</p>
+            <div class="input-area">
+                <input type="text" id="senderNameInput" placeholder="Your Name">
+                <button id="generateLinkButton">Create Greeting</button>
+            </div>
+            
+            <div id="generatedLinkContainer" class="hidden">
+                <p>Your greeting link is ready!</p>
+                <a href="#" id="displayLink" target="_blank"></a>
+                <div class="action-buttons">
+                    <button id="copyButton">
+                        <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                          <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                          <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                        </svg>
+                        Copy Link
+                    </button>
+                    <button id="shareOnWhatsAppButton" class="hidden">
+                        <svg class="icon-svg" viewBox="0 0 24 24">
+                            <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21h.01c5.46 0 9.91-4.45 9.91-9.91s-4.45-9.91-9.91-9.91zM17.5 14.3c-.28-.14-1.67-.82-1.93-.91s-.45-.14-.64.14-.73.91-.9 1.1-.33.21-.61.07c-.28-.14-1.17-.43-2.23-1.37s-1.09-1.45-1.22-1.69c-.13-.24-.01-.37.12-.51.11-.11.28-.28.42-.42.12-.12.16-.21.25-.35.09-.14.05-.28-.02-.42s-.64-1.54-.87-2.1c-.23-.55-.47-.48-.64-.48-.17 0-.36-.01-.55-.01s-.45.07-.69.35c-.24.28-.92.9-1.12 2.18s.23 2.38.26 2.55c.03.17.46.72 1.04 1.29.94.93 1.68 1.23 2.28 1.4.78.23 1.24.19 1.69.11.49-.08 1.67-.68 1.9-.1.33.17.55.68.64.82.09.14.09.23.01.37s-.44.56-.61.67c-.17.11-.33.13-.47.07z"/>
+                        </svg>
+                        Share on WhatsApp
+                    </button>
+                    <button id="shareButton" class="hidden">
+                         <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                          <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z"/>
+                        </svg>
+                        More Options
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const senderNameInput = document.getElementById('senderNameInput');
+        const generateLinkButton = document.getElementById('generateLinkButton');
+        const generatedLinkContainer = document.getElementById('generatedLinkContainer');
+        const displayLink = document.getElementById('displayLink');
+        const copyButton = document.getElementById('copyButton');
+        const shareButton = document.getElementById('shareButton'); 
+        const shareOnWhatsAppButton = document.getElementById('shareOnWhatsAppButton');
+        
+        const eidMubarakTextH1 = document.getElementById('eidMubarakText'); // "EID MUBARAK"
+        const namePlaceholderH2 = document.getElementById('namePlaceholder'); // "From [Sender]"
+        
+        let currentGeneratedLink = '';
+        let currentSenderName = '';
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const senderNameFromUrl = urlParams.get('sender');
+
+            // "EID MUBARAK" is always visible via HTML/CSS styling
+            // eidMubarakTextH1.textContent = "EID MUBARAK"; // Already set in HTML, can be removed from JS if static
+
+            if (senderNameFromUrl) {
+                const decodedSenderName = decodeURIComponent(senderNameFromUrl);
+                currentSenderName = decodedSenderName; 
+                
+                namePlaceholderH2.innerHTML = `From <span style="font-weight:bold; color:#f1c40f;">${decodedSenderName}</span>`;
+                namePlaceholderH2.classList.remove('hidden'); // Show the "From" part
+                
+                // Trigger animations for both if sender name is present
+                eidMubarakTextH1.classList.add('animated-text');
+                namePlaceholderH2.classList.add('animated-text');
+
+                launchFireworks();
+            } else {
+                // If no sender name, only "EID MUBARAK" is animated on initial load (if desired)
+                 eidMubarakTextH1.classList.add('animated-text'); // Animate "EID MUBARAK" even on initial load
+                 namePlaceholderH2.classList.add('hidden'); // Ensure "From" is hidden
+            }
+        };
+
+        generateLinkButton.addEventListener('click', function() {
+            const senderNameVal = senderNameInput.value.trim();
+
+            if (senderNameVal === "") {
+                alert("Please enter your name.");
+                return;
+            }
+            currentSenderName = senderNameVal; 
+
+            const encodedSenderName = encodeURIComponent(senderNameVal);
+            const baseUrl = window.location.href.split('?')[0];
+            currentGeneratedLink = `${baseUrl}?sender=${encodedSenderName}`;
+
+            displayLink.href = currentGeneratedLink;
+            displayLink.textContent = currentGeneratedLink;
+            generatedLinkContainer.classList.remove('hidden');
+
+            shareOnWhatsAppButton.classList.remove('hidden');
+            if (navigator.share) {
+                shareButton.classList.remove('hidden');
+            } else {
+                shareButton.classList.add('hidden');
+            }
+        });
+
+        copyButton.addEventListener('click', function() {
+            if (!currentGeneratedLink) return;
+            navigator.clipboard.writeText(currentGeneratedLink).then(function() {
+                alert("Link copied to clipboard!");
+            }, function(err) {
+                alert("Failed to copy link: " + err);
+            });
+        });
+
+        shareOnWhatsAppButton.addEventListener('click', function() {
+            if (!currentGeneratedLink) return;
+            const message = `✨ Hey! I've made a special Eid Greeting for you from ${currentSenderName}! ✨\n\nOpen it here:\n${currentGeneratedLink}`;
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        });
+
+        shareButton.addEventListener('click', async function() { 
+            if (!currentGeneratedLink || !navigator.share) return;
+
+            const shareText = currentSenderName 
+                ? `✨ You've received a special Eid Mubarak greeting from ${currentSenderName}! ✨\nOpen it here:`
+                : `✨ You've received a special Eid Mubarak greeting! ✨\nOpen it here:`;
+
+            try {
+                await navigator.share({
+                    title: 'Eid Mubarak Greeting!',
+                    text: shareText,
+                    url: currentGeneratedLink,
+                });
+            } catch (error) {
+                console.error('Error sharing:', error);
+            }
+        });
+
+        function launchFireworks() {
+            const duration = 6 * 1000; 
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 35, spread: 360, ticks: 80, zIndex: 1000, disableForReducedMotion: true };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+
+                const particleCount = 150 * (timeLeft / duration);
+
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                    colors: ['#f1c40f', '#e67e22', '#e74c3c', '#ecf0f1', '#2ecc71'] // Gold, Orange, Red, White, Green
+                }));
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                    colors: ['#3498db', '#9b59b6', '#1abc9c', '#f1c40f', '#e74c3c'] // Blue, Purple, Turquoise, Gold, Red
+                }));
+                confetti(Object.assign({}, defaults, { 
+                    particleCount: particleCount * 0.7,
+                    origin: { x: randomInRange(0.4, 0.6), y: Math.random() - 0.3 },
+                    colors: ['#FF69B4', '#ADD8E6', '#E6E6FA', '#F0E68C', '#f1c40f'] // Pinks, Blues, Lavenders, Gold
+                }));
+            }, 200); 
+        }
+    </script>
+
+</body>
+</html>
+<script type="text/javascript">
+	atOptions = {
+		'key' : 'fdfa28a6ac77e85dc5dde07e96a048e7',
+		'format' : 'iframe',
+		'height' : 60,
+		'width' : 468,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//www.highperformanceformat.com/fdfa28a6ac77e85dc5dde07e96a048e7/invoke.js"></script>
